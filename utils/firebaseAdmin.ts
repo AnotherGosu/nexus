@@ -11,4 +11,7 @@ if (!firebaseAdmin.apps.length) {
   });
 }
 
+export const bucket = firebaseAdmin.storage().bucket();
+export const auth = firebaseAdmin.auth();
+
 export default firebaseAdmin;

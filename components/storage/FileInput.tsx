@@ -1,11 +1,12 @@
 import React, { useRef } from "react";
 import { Button } from "@chakra-ui/react";
+import { uploadFile } from "utils/storage";
 
 interface Props {
-  uploadFiles: (files: File[]) => void;
+  currentFolderPath: string;
 }
 
-const FileInput: React.FC<Props> = ({ uploadFiles }) => {
+const FileInput: React.FC<Props> = ({ currentFolderPath }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onButtonClick = () => {
@@ -13,8 +14,8 @@ const FileInput: React.FC<Props> = ({ uploadFiles }) => {
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files);
-    uploadFiles(files);
+    const file = Array.from(e.target.files)[0];
+    uploadFile(file);
   };
 
   return (

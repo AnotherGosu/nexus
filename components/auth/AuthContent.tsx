@@ -1,13 +1,7 @@
 import { VStack, Heading, Button, StackProps } from "@chakra-ui/react";
 import { FormState } from "react-hook-form";
 import InputField from "../common/InputField";
-
-type RefReturn =
-  | string
-  | ((instance: HTMLInputElement | null) => void)
-  | React.RefObject<HTMLInputElement>
-  | null
-  | undefined;
+import { RefReturn } from "utils/types";
 
 type Props = StackProps & {
   register: ({ required }: { required?: string }) => RefReturn;

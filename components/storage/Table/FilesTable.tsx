@@ -1,17 +1,12 @@
 import { Table, Thead, Tbody, Tr, Th } from "@chakra-ui/react";
 import FilesTableRow from "./FilesTableRow";
-
-type File = {
-  name: string;
-  updated: string;
-  id: string;
-};
+import { File } from "utils/types";
 
 interface Props {
   files: File[];
 }
 
-const ObjectsTable: React.FC<Props> = ({ files }) => {
+const FilesTable: React.FC<Props> = ({ files }) => {
   return (
     <Table variant="simple">
       <Thead>
@@ -23,12 +18,12 @@ const ObjectsTable: React.FC<Props> = ({ files }) => {
         </Tr>
       </Thead>
       <Tbody>
-        {files.map(({ name, updated, id }) => (
-          <FilesTableRow name={name} updated={updated} key={id} />
+        {files.map((file) => (
+          <FilesTableRow key={file.id} {...file} />
         ))}
       </Tbody>
     </Table>
   );
 };
 
-export default ObjectsTable;
+export default FilesTable;

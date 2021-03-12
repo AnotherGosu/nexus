@@ -2,7 +2,6 @@ import { Flex, Text, VStack, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 const routes = [
-  { name: "Home page", path: "/storage" },
   { name: "Files", path: "/storage/files" },
   { name: "Common", path: "/storage/common" },
   { name: "Recovery", path: "/storage/recovery" },

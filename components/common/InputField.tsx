@@ -6,13 +6,7 @@ import {
   InputProps,
 } from "@chakra-ui/react";
 import { FieldError } from "react-hook-form";
-
-type RefReturn =
-  | string
-  | ((instance: HTMLInputElement | null) => void)
-  | React.RefObject<HTMLInputElement>
-  | null
-  | undefined;
+import { RefReturn } from "utils/types";
 
 type Props = InputProps & {
   label: string;

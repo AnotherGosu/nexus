@@ -2,6 +2,7 @@ import { useToast } from "@chakra-ui/react";
 import { useAuth } from "../utils/auth";
 import { useRouter } from "next/router";
 import FullScreenAuth from "../components/auth/FullscreenAuth";
+import axios from "axios";
 
 const SignUp = () => {
   const auth = useAuth();
@@ -17,6 +18,7 @@ const SignUp = () => {
   }) => {
     try {
       await auth.signUp(email, password);
+      await axios.get("/api/auth/sign-up");
       toast({
         title: "Success",
         description: "Your account has been created.",
@@ -24,7 +26,7 @@ const SignUp = () => {
         duration: 3000,
         isClosable: true,
       });
-      router.push("/storage");
+      router.push("/storage/files");
     } catch (err) {
       toast({
         title: "An error occured",

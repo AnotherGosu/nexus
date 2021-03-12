@@ -17,7 +17,7 @@ const SignIn = () => {
   }) => {
     try {
       await auth.signIn(email, password);
-      router.push("/storage");
+      router.push("/storage/files");
     } catch (err) {
       toast({
         title: "An error occured",

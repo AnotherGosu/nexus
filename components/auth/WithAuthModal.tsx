@@ -18,7 +18,7 @@ const withAuthModal = <P extends AdditionalProps>(Component: React.FC<P>) => (
   const signIn = async ({ email, password }) => {
     try {
       await auth.signIn(email, password);
-      router.push("/storage");
+      router.push("/storage/files");
     } catch (err) {
       toast({
         title: "An error occured.",
@@ -31,7 +31,7 @@ const withAuthModal = <P extends AdditionalProps>(Component: React.FC<P>) => (
   };
 
   const triggerMoodal = () => {
-    auth.userId ? router.push("/storage") : onOpen();
+    auth.userId ? router.push("/storage/files") : onOpen();
   };
 
   return (

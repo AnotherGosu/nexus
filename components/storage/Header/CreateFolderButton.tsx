@@ -10,25 +10,26 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../utils/auth";
-import InputField from "../common/InputField";
+import InputField from "../../common/InputField";
 import axios from "axios";
 
 interface Props {
   mutate: any;
+  currentFolderPath: string;
 }
 
-const CreateFolderButton: React.FC<Props> = ({ mutate }) => {
+const CreateFolderButton: React.FC<Props> = ({ mutate, currentFolderPath }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, formState } = useForm<{
     folderName: string;
   }>();
-  const { userId } = useAuth();
 
   const createFolder = async (folderName: string) => {
     try {
-      await axios.post("/api/storage", { folderName });
-    } catch (err) {}
+      await axios.post(`/api/storage/folder/${currentFolderPath}${folderName}`);
+    } catch (err) {
+      console.log(err);
+    }
     mutate();
     onClose();
   };
