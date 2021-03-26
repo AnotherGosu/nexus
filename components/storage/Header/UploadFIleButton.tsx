@@ -1,11 +1,15 @@
-import React, { useRef } from "react";
-import { Button } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
+
+import { useRef } from "react";
 import axios from "axios";
-import { uploadFiles } from "utils/storage";
 
-interface Props {}
+interface Props {
+  mutate: (data?: any, shouldRevalidate?: boolean) => Promise<any>;
+  folderApiPrefix: string;
+}
 
-const FileInput: React.FC<Props> = ({}) => {
+const FileInput: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
+  const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onButtonClick = () => {
@@ -14,6 +18,7 @@ const FileInput: React.FC<Props> = ({}) => {
 
   const onInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files);
+
     if (files.length) {
       const formData = new FormData();
 
@@ -21,15 +26,39 @@ const FileInput: React.FC<Props> = ({}) => {
         formData.append("files[]", file, file.name);
       });
 
-      const response = await axios.post("/api/storage/file", formData, {
-        headers: { "content-type": "multipart/form-data" },
-      });
+      const response = await axios.post(
+        `/api/storage/file${folderApiPrefix}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "File uploaded successfully",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "File upload error",
+          description: response.data,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      mutate();
     }
   };
 
   return (
     <>
-      <Button onClick={onButtonClick}>Upload</Button>
+      <Button size="lg" colorScheme="teal" onClick={onButtonClick}>
+        Upload
+      </Button>
       <input
         type="file"
         id="file-input"

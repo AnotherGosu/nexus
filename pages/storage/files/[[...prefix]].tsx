@@ -1,5 +1,5 @@
 import { Box, VStack, Heading, Divider } from "@chakra-ui/react";
-import FilesTable from "components/storage/Table/FilesTable";
+import FilesTable from "components/storage/FilesTable";
 import Aside from "components/storage/Aside";
 import Header from "components/storage/Header/Header";
 
@@ -14,9 +14,9 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-const Files: React.FC<Props> = ({ initialData, currentFolderPath }) => {
+const Files: React.FC<Props> = ({ initialData, folderApiPrefix }) => {
   const { data: files, mutate } = useSWR(
-    `/api/storage/folder/${currentFolderPath}`,
+    `/api/storage/folder${folderApiPrefix}`,
     fetcher,
     {
       initialData,
@@ -26,7 +26,7 @@ const Files: React.FC<Props> = ({ initialData, currentFolderPath }) => {
   return (
     <Box width="100%" height="100%" pos="relative" pl="300px">
       <Aside />
-      <Header mutate={mutate} currentFolderPath={currentFolderPath} />
+      <Header mutate={mutate} folderApiPrefix={folderApiPrefix} />
       <Divider />
       <VStack as="main" px="100px" py="25px" spacing="25px" align="flex-start">
         <Heading as="h1" size="lg" fontWeight="medium">
@@ -72,12 +72,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     //first file is a folder itself
     const currentFolderPath = files.shift().path;
 
+    //cut last slash to avoid NextJS API redirect
+    const folderApiPrefix = currentFolderPath
+      ? "/" + currentFolderPath.slice(0, -1)
+      : "";
+
     return {
       props: {
-        uid,
         initialData: files,
-        prefix,
-        currentFolderPath,
+        folderApiPrefix,
       },
     };
   } catch (err) {

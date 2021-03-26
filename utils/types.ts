@@ -1,6 +1,6 @@
 export type File = {
   name: string;
-  updated: string;
+  lastEdited: string;
   id: string;
   path: string;
 };

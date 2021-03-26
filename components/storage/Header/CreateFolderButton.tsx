@@ -9,16 +9,17 @@ import {
   useDisclosure,
   ModalFooter,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
 import InputField from "../../common/InputField";
+
+import { useForm } from "react-hook-form";
 import axios from "axios";
 
 interface Props {
-  mutate: any;
-  currentFolderPath: string;
+  mutate: (data?: any, shouldRevalidate?: boolean) => Promise<any>;
+  folderApiPrefix: string;
 }
 
-const CreateFolderButton: React.FC<Props> = ({ mutate, currentFolderPath }) => {
+const CreateFolderButton: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, formState } = useForm<{
     folderName: string;
@@ -26,7 +27,7 @@ const CreateFolderButton: React.FC<Props> = ({ mutate, currentFolderPath }) => {
 
   const createFolder = async (folderName: string) => {
     try {
-      await axios.post(`/api/storage/folder/${currentFolderPath}${folderName}`);
+      await axios.post(`/api/storage/folder${folderApiPrefix}`, { folderName });
     } catch (err) {
       console.log(err);
     }

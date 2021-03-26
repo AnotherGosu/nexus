@@ -28,7 +28,6 @@ const ObjectMenu: React.FC = () => {
         variant="fill"
       />
       <MenuList>
-        <MenuItem>Dowload</MenuItem>
         <MenuItem>Rename</MenuItem>
         <MenuItem>Move</MenuItem>
         <MenuItem>Copy</MenuItem>
