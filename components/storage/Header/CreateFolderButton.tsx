@@ -8,28 +8,38 @@ import {
   ModalHeader,
   useDisclosure,
   ModalFooter,
+  useToast,
 } from "@chakra-ui/react";
 import InputField from "../../common/InputField";
 
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import { useFolder } from "contexts/folder";
 
-interface Props {
-  mutate: (data?: any, shouldRevalidate?: boolean) => Promise<any>;
-  folderApiPrefix: string;
-}
-
-const CreateFolderButton: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
+const CreateFolderButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, formState } = useForm<{
     folderName: string;
   }>();
 
+  const { mutate, createFolderReq } = useFolder();
+  const toast = useToast();
+
   const createFolder = async (folderName: string) => {
-    try {
-      await axios.post(`/api/storage/folder${folderApiPrefix}`, { folderName });
-    } catch (err) {
-      console.log(err);
+    const res = await createFolderReq(folderName);
+    if (res.status === 200) {
+      toast({
+        description: `Folder "${folderName}" created.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        description: "Error occurred.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
     mutate();
     onClose();
@@ -58,6 +68,7 @@ const CreateFolderButton: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
                 size="lg"
                 register={register}
                 required="Please specify folder name"
+                autoFocus
                 error={formState.errors.folderName}
               />
             </ModalBody>

@@ -1,6 +1,5 @@
-// import queryString from 'query-string';
 import { createContext, useState, useEffect, useContext } from "react";
-import firebase from "./firebase";
+import firebase from "utils/firebase";
 import nookies from "nookies";
 
 interface Auth {
@@ -43,18 +42,6 @@ function useProvideAuth() {
     setUser(null);
   };
 
-  // const sendPasswordResetEmail = async (email: string) => {
-  //   await firebase.auth().sendPasswordResetEmail(email);
-  //   return true;
-  // };
-
-  // const confirmPasswordReset = async (password, code) => {
-  //   const resetCode = code || getFromQueryString("oobCode");
-
-  //   await firebase.auth().confirmPasswordReset(resetCode, password);
-  //   return true;
-  // };
-
   useEffect((): firebase.Unsubscribe => {
     if (typeof window !== "undefined") {
       (window as any).nookies = nookies;
@@ -91,7 +78,3 @@ function useProvideAuth() {
     signOut,
   };
 }
-
-// const getFromQueryString = (key) => {
-//   return queryString.parse(window.location.search)[key];
-// };

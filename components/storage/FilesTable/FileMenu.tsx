@@ -5,9 +5,36 @@ import {
   MenuItem,
   Icon,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 
-const ObjectMenu: React.FC = () => {
+import { useFolder } from "contexts/folder";
+
+interface Props {
+  path: string;
+}
+
+const FileMenu: React.FC<Props> = ({ path }) => {
+  const { mutate, deleteFileReq } = useFolder();
+  const toast = useToast();
+
+  const handleRename = () => {
+    mutate("/api/storage/folder");
+  };
+
+  const handleDelete = async () => {
+    const res = await deleteFileReq(path);
+    if (res.status === 200) {
+      toast({
+        title: "File deleted",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    mutate();
+  };
+
   return (
     <Menu>
       <MenuButton
@@ -28,13 +55,13 @@ const ObjectMenu: React.FC = () => {
         variant="fill"
       />
       <MenuList>
-        <MenuItem>Rename</MenuItem>
+        <MenuItem onClick={handleRename}>Rename</MenuItem>
         <MenuItem>Move</MenuItem>
         <MenuItem>Copy</MenuItem>
-        <MenuItem>Delete</MenuItem>
+        <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </MenuList>
     </Menu>
   );
 };
 
-export default ObjectMenu;
+export default FileMenu;

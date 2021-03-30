@@ -7,14 +7,9 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import CreateFolderButton from "./CreateFolderButton";
-import UploadFileButton from "./UploadFIleButton";
+import UploadFilesButton from "./UploadFilesButton";
 
-interface Props {
-  mutate: (data?: any, shouldRevalidate?: boolean) => Promise<any>;
-  folderApiPrefix: string;
-}
-
-const Header: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
+const Header: React.FC = () => {
   return (
     <Flex
       as="header"
@@ -31,8 +26,8 @@ const Header: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
         <Input placeholder="Search files, folders" variant="filled" />
       </InputGroup>
       <ButtonGroup spacing={4}>
-        <CreateFolderButton mutate={mutate} folderApiPrefix={folderApiPrefix} />
-        <UploadFileButton mutate={mutate} folderApiPrefix={folderApiPrefix} />
+        <CreateFolderButton />
+        <UploadFilesButton />
       </ButtonGroup>
     </Flex>
   );

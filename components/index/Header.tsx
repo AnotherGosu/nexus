@@ -1,5 +1,5 @@
 import { Flex, HStack, Button, Link, Text } from "@chakra-ui/react";
-import { useAuth } from "../../utils/auth";
+import { useAuth } from "../../contexts/auth";
 import NextLink from "next/link";
 
 const Header: React.FC = () => {

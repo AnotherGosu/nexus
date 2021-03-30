@@ -7,8 +7,8 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import withAuthModal from "../components/auth/WithAuthModal";
-import Header from "../components/index/Header";
+import withAuthModal from "components/auth/WithAuthModal";
+import Header from "components/index/Header";
 
 interface Props {
   triggerModal: () => void;

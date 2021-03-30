@@ -1,5 +1,4 @@
 import { bucket } from "./firebaseAdmin";
-import downloadFolder from "downloads-folder";
 
 export async function getFiles(path: string) {
   const [files] = await bucket.getFiles({
@@ -14,8 +13,8 @@ export async function getFiles(path: string) {
     const prefixes = file.name.split("/");
     const lastEdited = new Date(updated).toLocaleString();
 
-    //last prefix for folder is an empty string
-    //last prefix for file is it's name
+    //last prefix of folder is an empty string
+    //last prefix of file is it's name
     const lastPrefix = prefixes[prefixes.length - 1];
     const name = lastPrefix ? lastPrefix : prefixes[prefixes.length - 2];
 
@@ -26,11 +25,29 @@ export async function getFiles(path: string) {
   });
 }
 
-export function uploadFile(content: string | Buffer, path: string) {
-  return bucket.file(path).save(content, { resumable: false });
+export function uploadFiles(files: any[], path: string) {
+  return Promise.all(
+    files.map(async (file) => {
+      const fileName = `${path}/${file.originalname}`;
+      const content = file.buffer;
+      return bucket.file(fileName).save(content, { resumable: false });
+    })
+  );
 }
 
-export function dowloadFile(path: string, fileName: string) {
+export function createFolder(path: string) {
+  return bucket.file(path).save("", { resumable: false });
+}
+
+export function dowloadFile(path: string) {
   return bucket.file(path).download();
-  // .download({ destination: `${downloadFolder()}/${fileName}` });
+}
+
+export async function deleteFile(path: string) {
+  const [files] = await bucket.getFiles({
+    autoPaginate: false,
+    prefix: path,
+  });
+
+  return Promise.all(files.map(async (file) => file.delete()));
 }

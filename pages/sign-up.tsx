@@ -1,7 +1,7 @@
 import { useToast } from "@chakra-ui/react";
-import { useAuth } from "../utils/auth";
+import { useAuth } from "contexts/auth";
 import { useRouter } from "next/router";
-import FullScreenAuth from "../components/auth/FullscreenAuth";
+import FullScreenAuth from "components/auth/FullscreenAuth";
 import axios from "axios";
 
 const SignUp = () => {

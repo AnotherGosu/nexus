@@ -2,18 +2,17 @@ import { HStack, Image, Tr, Td, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import FileMenu from "./FileMenu";
 
-import { File } from "utils/types";
-import axios from "axios";
+import { useFolder } from "contexts/folder";
 import { saveAs } from "file-saver";
+import { File } from "utils/types";
 
 const FilesTableRow: React.FC<File> = ({ name, lastEdited, path }) => {
   const [_, ext] = name.split(/\.(?=[^\.]+$)/);
-  console.log(`File name: ${name}, File path: ${path}`);
+
+  const { downloadFileReq } = useFolder();
 
   const downloadFile = async () => {
-    const blob = await axios.get(`/api/storage/file/${path}`, {
-      responseType: "blob",
-    });
+    const blob = await downloadFileReq(path);
     saveAs(blob.data, name);
   };
 
@@ -40,7 +39,7 @@ const FilesTableRow: React.FC<File> = ({ name, lastEdited, path }) => {
       <Td>{lastEdited}</Td>
       <Td>Only you</Td>
       <Td>
-        <FileMenu />
+        <FileMenu path={path} />
       </Td>
     </Tr>
   );

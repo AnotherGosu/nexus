@@ -1,16 +1,13 @@
 import { Button, useToast } from "@chakra-ui/react";
 
 import { useRef } from "react";
-import axios from "axios";
+import { useFolder } from "contexts/folder";
 
-interface Props {
-  mutate: (data?: any, shouldRevalidate?: boolean) => Promise<any>;
-  folderApiPrefix: string;
-}
-
-const FileInput: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
+const UploadFilesButton: React.FC = () => {
   const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { mutate, uploadFilesReq } = useFolder();
 
   const onButtonClick = () => {
     fileInputRef.current && fileInputRef.current.click();
@@ -24,27 +21,29 @@ const FileInput: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
 
       files.forEach((file) => {
         formData.append("files[]", file, file.name);
+        toast({
+          description: `Uploading "${file.name}"`,
+          status: "info",
+          duration: null,
+        });
       });
 
-      const response = await axios.post(
-        `/api/storage/file${folderApiPrefix}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const res = await uploadFilesReq(formData);
+      toast.closeAll();
 
-      if (response.status === 200) {
-        toast({
-          title: "File uploaded successfully",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
+      if (res.status === 200) {
+        const { uploadedFiles } = res.data;
+        uploadedFiles.forEach((file) =>
+          toast({
+            title: `Uploaded ${file}`,
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          })
+        );
       } else {
         toast({
-          title: "File upload error",
-          description: response.data,
+          description: "Error occurred.",
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -75,4 +74,4 @@ const FileInput: React.FC<Props> = ({ mutate, folderApiPrefix }) => {
   );
 };
 
-export default FileInput;
+export default UploadFilesButton;

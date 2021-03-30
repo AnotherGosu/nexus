@@ -1,6 +1,6 @@
 import { useToast, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useAuth } from "utils/auth";
+import { useAuth } from "contexts/auth";
 import AuthModal from "./AuthModal";
 
 type AdditionalProps = {

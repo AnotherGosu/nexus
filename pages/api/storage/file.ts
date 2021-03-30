@@ -1,13 +1,13 @@
 import nc from "next-connect";
 import multer from "multer";
-import { dowloadFile, uploadFile } from "utils/storage";
+import { dowloadFile, uploadFiles } from "utils/storage";
 import { NextApiRequest, NextApiResponse } from "next";
 import { parseCookies } from "nookies";
 import { auth } from "utils/firebaseAdmin";
 
 const upload = multer();
 
-const apiRoute = nc<NextApiRequest & { files: any[] }, NextApiResponse>({
+const fileRoute = nc<NextApiRequest & { files: any[] }, NextApiResponse>({
   onError(error, req, res) {
     res.status(501).json({ error: error.message });
   },
@@ -16,40 +16,38 @@ const apiRoute = nc<NextApiRequest & { files: any[] }, NextApiResponse>({
   },
 });
 
-apiRoute.use(upload.array("files[]"));
+fileRoute.use(upload.array("files[]"));
 
-apiRoute.get(async (req, res) => {
+fileRoute.get(async (req, res) => {
   const { token } = parseCookies({ req });
   const { uid } = await auth.verifyIdToken(token);
-  const { prefix = [] } = req.query as { prefix: string[] };
+  const { path } = req.query;
 
-  const path = `${uid}/${prefix.join("/")}`;
-  const fileName = prefix.pop();
-  console.log(fileName);
-  const data = await dowloadFile(path, fileName);
+  const data = await dowloadFile(`${uid}/${path}`);
   const contents = data[0];
+
   res.setHeader("Content-Type", "application/octet-stream; charset=utf-8");
   res.setHeader("Content-Length", contents.length);
   res.write(contents, "binary");
   res.end();
 });
 
-apiRoute.post(async (req, res) => {
+fileRoute.post(async (req, res) => {
   const { token } = parseCookies({ req });
   const { uid } = await auth.verifyIdToken(token);
-  const { prefix = [] } = req.query as { prefix: string[] };
+  const {
+    files,
+    query: { folderPath },
+  } = req;
 
-  const file = req.files[0];
-  prefix.push(file.originalname);
-  const path = `${uid}/${prefix.join("/")}`;
-  await uploadFile(file.buffer, path);
+  const path = folderPath ? `${uid}/${folderPath}` : uid;
+  await uploadFiles(files, path);
 
-  res.status(200).json("File uploaded successfully");
+  const uploadedFiles = files.map((file) => file.originalname);
+  res.status(200).json({ uploadedFiles });
 });
 
-apiRoute.delete;
-
-export default apiRoute;
+export default fileRoute;
 
 export const config = {
   api: {

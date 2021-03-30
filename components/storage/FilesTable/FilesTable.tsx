@@ -1,12 +1,11 @@
 import { Table, Thead, Tbody, Tr, Th } from "@chakra-ui/react";
 import FilesTableRow from "./FilesTableRow";
-import { File } from "utils/types";
 
-interface Props {
-  files: File[];
-}
+import { useFolder } from "contexts/folder";
 
-const FilesTable: React.FC<Props> = ({ files }) => {
+const FilesTable: React.FC = () => {
+  const { files } = useFolder();
+
   return (
     <Table variant="simple">
       <Thead>
