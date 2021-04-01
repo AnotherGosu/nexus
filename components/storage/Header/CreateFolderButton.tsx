@@ -1,5 +1,6 @@
 import {
   Button,
+  Box,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,12 +9,12 @@ import {
   ModalHeader,
   useDisclosure,
   ModalFooter,
-  useToast,
 } from "@chakra-ui/react";
 import InputField from "../../common/InputField";
 
 import { useForm } from "react-hook-form";
 import { useFolder } from "contexts/folder";
+import responseToast from "helpers/responseToast";
 
 const CreateFolderButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -22,27 +23,12 @@ const CreateFolderButton: React.FC = () => {
   }>();
 
   const { mutate, createFolderReq } = useFolder();
-  const toast = useToast();
 
   const createFolder = async (folderName: string) => {
     const res = await createFolderReq(folderName);
-    if (res.status === 200) {
-      toast({
-        description: `Folder "${folderName}" created.`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
-      toast({
-        description: "Error occurred.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-    mutate();
     onClose();
+    responseToast(res.status, `Folder "${folderName}" created.`);
+    mutate();
   };
 
   return (
@@ -55,7 +41,8 @@ const CreateFolderButton: React.FC = () => {
         <ModalContent>
           <ModalHeader>Create folder</ModalHeader>
           <ModalCloseButton />
-          <form
+          <Box
+            as="form"
             onSubmit={handleSubmit(({ folderName }) =>
               createFolder(folderName)
             )}
@@ -64,7 +51,7 @@ const CreateFolderButton: React.FC = () => {
               <InputField
                 id="folder-name"
                 name="folderName"
-                label="Title"
+                label="Folder name"
                 size="lg"
                 register={register}
                 required="Please specify folder name"
@@ -72,11 +59,9 @@ const CreateFolderButton: React.FC = () => {
                 error={formState.errors.folderName}
               />
             </ModalBody>
-
             <ModalFooter>
               <Button
                 colorScheme="teal"
-                mr={3}
                 type="submit"
                 w="100%"
                 isLoading={formState.isSubmitting}
@@ -84,7 +69,7 @@ const CreateFolderButton: React.FC = () => {
                 Create
               </Button>
             </ModalFooter>
-          </form>
+          </Box>
         </ModalContent>
       </Modal>
     </>

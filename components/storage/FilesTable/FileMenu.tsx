@@ -1,65 +1,54 @@
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Icon,
-  IconButton,
-  useToast,
-} from "@chakra-ui/react";
+import { Menu, MenuList, MenuItem, useDisclosure } from "@chakra-ui/react";
+import FileMenuButton from "./FileMenuButton";
+import RenameFileModal from "./RenameFileModal";
 
 import { useFolder } from "contexts/folder";
+import responseToast from "helpers/responseToast";
 
 interface Props {
   path: string;
+  name: string;
+  ext: string;
 }
 
-const FileMenu: React.FC<Props> = ({ path }) => {
-  const { mutate, deleteFileReq } = useFolder();
-  const toast = useToast();
+const FileMenu: React.FC<Props> = ({ path, name, ext }) => {
+  const { mutate, deleteFileReq, copyFileReq } = useFolder();
+  const {
+    onOpen: onRenameModalOpen,
+    onClose: onRenameModalClose,
+    isOpen: isRenameModalOpen,
+  } = useDisclosure();
 
-  const handleRename = () => {
-    mutate("/api/storage/folder");
+  const handleMove = () => {};
+
+  const handleCopy = async () => {
+    const res = await copyFileReq(path, name, ext);
+    responseToast(res.status, `File "${name}" copied.`);
+    mutate();
   };
 
   const handleDelete = async () => {
     const res = await deleteFileReq(path);
-    if (res.status === 200) {
-      toast({
-        title: "File deleted",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+    responseToast(res.status, `File "${name}" deleted.`);
     mutate();
   };
 
   return (
     <Menu>
-      <MenuButton
-        as={IconButton}
-        aria-label="Options"
-        icon={
-          <Icon
-            xmlns="http://www.w3.org/2000/svg"
-            width="6"
-            height="6"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
-            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-          </Icon>
-        }
-        size="xs"
-        variant="fill"
-      />
+      <FileMenuButton />
       <MenuList>
-        <MenuItem onClick={handleRename}>Rename</MenuItem>
-        <MenuItem>Move</MenuItem>
-        <MenuItem>Copy</MenuItem>
+        <MenuItem onClick={onRenameModalOpen}>Rename</MenuItem>
+        <MenuItem onClick={handleMove}>Move</MenuItem>
+        <MenuItem onClick={handleCopy}>Copy</MenuItem>
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </MenuList>
+      <RenameFileModal
+        path={path}
+        name={name}
+        ext={ext}
+        isOpen={isRenameModalOpen}
+        onClose={onRenameModalClose}
+      />
     </Menu>
   );
 };

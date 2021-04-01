@@ -1,5 +1,11 @@
 import nc from "next-connect";
-import { getFiles, createFolder, deleteFile } from "utils/storage";
+import {
+  getFiles,
+  createFolder,
+  deleteFile,
+  copyFile,
+  renameFile,
+} from "utils/storage";
 import { NextApiRequest, NextApiResponse } from "next";
 import { parseCookies } from "nookies";
 import { auth } from "utils/firebaseAdmin";
@@ -40,7 +46,30 @@ folderRoute.delete(async (req, res) => {
   const { uid } = await auth.verifyIdToken(token);
   const { path } = req.body;
 
-  await deleteFile(`${uid}/${path}`);
+  const fullPath = `${uid}/${path}`;
+  await deleteFile(fullPath);
+
+  res.status(200).end();
+});
+
+folderRoute.put(async (req, res) => {
+  const { token } = parseCookies({ req });
+  const { uid } = await auth.verifyIdToken(token);
+  const { path, name, ext } = req.body;
+
+  const fullPath = `${uid}/${path}`;
+  await copyFile(fullPath, name, ext);
+
+  res.status(200).end();
+});
+
+folderRoute.patch(async (req, res) => {
+  const { token } = parseCookies({ req });
+  const { uid } = await auth.verifyIdToken(token);
+  const { path, name, ext, newName } = req.body;
+
+  const fullPath = `${uid}/${path}`;
+  await renameFile(fullPath, name, ext, newName);
 
   res.status(200).end();
 });

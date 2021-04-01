@@ -6,9 +6,7 @@ import { useFolder } from "contexts/folder";
 import { saveAs } from "file-saver";
 import { File } from "utils/types";
 
-const FilesTableRow: React.FC<File> = ({ name, lastEdited, path }) => {
-  const [_, ext] = name.split(/\.(?=[^\.]+$)/);
-
+const FilesTableRow: React.FC<File> = ({ name, ext, lastEdited, path }) => {
   const { downloadFileReq } = useFolder();
 
   const downloadFile = async () => {
@@ -16,30 +14,32 @@ const FilesTableRow: React.FC<File> = ({ name, lastEdited, path }) => {
     saveAs(blob.data, name);
   };
 
+  //consider that folder extension is "/"
   return (
     <Tr>
       <Td>
         <HStack spacing={4}>
           <Image
-            src={ext ? `/icons/${ext}.svg` : "/icons/folder.svg"}
-            alt="File extansion"
+            src={ext === "/" ? "/icons/folder.svg" : `/icons/${ext}.svg`}
+            alt={name}
+            fallbackSrc={"/icons/file.svg"}
             boxSize="30px"
           />
-          {ext ? (
-            <Link isTruncated onClick={downloadFile}>
-              {name}
-            </Link>
-          ) : (
+          {ext === "/" ? (
             <NextLink href={`/storage/files/${path}`}>
               <Link isTruncated>{name}</Link>
             </NextLink>
+          ) : (
+            <Link isTruncated onClick={downloadFile}>
+              {name}
+            </Link>
           )}
         </HStack>
       </Td>
       <Td>{lastEdited}</Td>
       <Td>Only you</Td>
       <Td>
-        <FileMenu path={path} />
+        <FileMenu path={path} name={name} ext={ext} />
       </Td>
     </Tr>
   );

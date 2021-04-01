@@ -2,6 +2,7 @@ import { Button, useToast } from "@chakra-ui/react";
 
 import { useRef } from "react";
 import { useFolder } from "contexts/folder";
+import responseToast from "helpers/responseToast";
 
 const UploadFilesButton: React.FC = () => {
   const toast = useToast();

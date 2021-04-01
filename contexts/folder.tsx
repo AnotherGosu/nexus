@@ -11,6 +11,17 @@ interface Folder {
   uploadFilesReq: (formData: FormData) => Promise<AxiosResponse<any>>;
   downloadFileReq: (path: string) => Promise<AxiosResponse<any>>;
   deleteFileReq: (path: string) => Promise<AxiosResponse<any>>;
+  copyFileReq: (
+    path: string,
+    name: string,
+    ext: string
+  ) => Promise<AxiosResponse<any>>;
+  renameFileReq: (
+    path: string,
+    name: string,
+    ext: string,
+    newName: string
+  ) => Promise<AxiosResponse<any>>;
 }
 
 const FolderContext = createContext<Folder | null>(null);
@@ -44,7 +55,7 @@ export const FolderProvider: React.FC<Props> = ({
     });
 
   const downloadFileReq = (path: string) =>
-    axios.get(`/api/storage/file/`, {
+    axios.get("/api/storage/file/", {
       params: { path },
       responseType: "blob",
     });
@@ -53,10 +64,20 @@ export const FolderProvider: React.FC<Props> = ({
     axios.delete("/api/storage/folder", { data: { path } });
 
   const createFolderReq = (name: string) =>
-    axios.post(`/api/storage/folder`, {
+    axios.post("/api/storage/folder", {
       folderPath,
       name,
     });
+
+  const copyFileReq = (path: string, name: string, ext: string) =>
+    axios.put("/api/storage/folder", { path, name, ext });
+
+  const renameFileReq = (
+    path: string,
+    name: string,
+    ext: string,
+    newName: string
+  ) => axios.patch("/api/storage/folder", { path, name, ext, newName });
 
   return (
     <FolderContext.Provider
@@ -68,6 +89,8 @@ export const FolderProvider: React.FC<Props> = ({
         downloadFileReq,
         createFolderReq,
         deleteFileReq,
+        copyFileReq,
+        renameFileReq,
       }}
     >
       {children}

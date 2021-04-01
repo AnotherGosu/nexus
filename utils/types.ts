@@ -1,5 +1,6 @@
 export type File = {
   name: string;
+  ext: string;
   lastEdited: string;
   id: string;
   path: string;

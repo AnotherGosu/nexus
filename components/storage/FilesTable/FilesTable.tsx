@@ -7,7 +7,7 @@ const FilesTable: React.FC = () => {
   const { files } = useFolder();
 
   return (
-    <Table variant="simple">
+    <Table>
       <Thead>
         <Tr>
           <Th>Name</Th>

@@ -7,6 +7,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
+import Head from "next/head";
 import withAuthModal from "components/auth/WithAuthModal";
 import Header from "components/index/Header";
 
@@ -17,6 +18,9 @@ interface Props {
 const Index: React.FC<Props> = ({ triggerModal }) => {
   return (
     <>
+      <Head>
+        <title>Nexus</title>
+      </Head>
       <Header />
       <VStack as="main" spacing={12} px={12}>
         <Grid
